@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <style>
+             #image_preview, #image_display {
+            align-content: center;
+            width: 150px;
+            height: 150px;
+            margin-left: 42px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        #image_preview img, #image_display img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        </style>
+    </head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <body>
+        <div class="container">
+
+            <form action="upload.php" method="POST" enctype="multipart/form-data">
+                <div>
+                    <label for="upload" class="file-upload">
+                        <span>Choose image</span>
+                        <input type="file" id="upload" onchange="upload1()" name="upload[]" style="padding-left: 62px;" />
+                    </label>
+                    <br />
+                    <div id="image_preview"></div>
+                    <br />
+                    <input type="submit" id="savebtn" class="btn btn-info" name='submitImage' value="Upload Image" />
+                </div>
+            </form>
+            <div id="image_display">
+            <br/>
+        </div>
+    </body>
+</html>
+<script>
+     $(document).ready(function () {
+        debugger;
+        var imagename = localStorage.getItem('image')
+        var image_table = document.getElementById("image_display");
+            image_table.innerHTML = `<img class="imageclass" src="Images/${imagename}" alt="img" onerror="this.onerror=null;this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';">`;
+     });
+function upload1() {
+    debugger;
+    var file = document.getElementById('upload').files[0];
+    if (file) {
+        localStorage.setItem("image", file.name);
+        if (file.size <= 1024 * 1024) { // Limit to 1MB (1024 * 1024 bytes)
+            var reader = new FileReader();
+            reader.onload = function () {
+                var imageData = reader.result;
+                displayImage(imageData);
+            };
+            reader.readAsDataURL(file);
+        }
+        else {
+            alert('File size exceeds the allowed limit of 1 MB.');
+        }
+    }
+}
+
+function displayImage(imageData) {
+    debugger;
+    var img = new Image();
+    img.src = imageData;
+    img.onload = function () {
+        var imagePreview = document.getElementById('image_preview');
+        imagePreview.innerHTML = '<img src="' + img.src + '">';
+        // $('#savebtn').show();
+    };
+    img.onerror = function () {
+        alert("Failed to load image.");
+    };
+}
+</script>
